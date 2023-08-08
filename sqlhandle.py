@@ -153,4 +153,14 @@ def Delete_system_access(system_name, user_name):
     cursor.execute(audit_query, (newid, system_name, Owner_User, Changed_On, "Deleted System Access"))
     conn.commit()
     
+def getheader(table):
+    cursor.execute(f"SELECT * FROM {table}")
+    header = [i[0] for i in cursor.description]
+    return header
+
+
+def getdata(table):
+    cursor.execute(f"SELECT * FROM {table}")
+    data = cursor.fetchall()
+    return data
 # Create_User('JohnD', "John", "Doe", "Accounting", "Microsoft", "JohnDoe@gmail.com")

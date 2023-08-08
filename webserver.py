@@ -1,61 +1,73 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from sqlhandle import *
 
 app = Flask(__name__)
 
-@app.route('/create-user/<user_name>/<first_name>/<last_name>/<department>/<company>/<company_email>')
-def create_user(user_name, first_name, last_name, department, company, company_email):
-    print("Creating user...")
-    print(user_name)
-    print(first_name)
-    print(last_name)
-    print(department)
-    print(company)
-    print(company_email)
-    Create_User(user_name, first_name, last_name, department, company, company_email)
-    return jsonify({'success': True})
 
 
-@app.route('/delete-user/<user_name>')
-def delete_user(user_name):
-    print("Deleting user...")
-    print(user_name)
-    Delete_User(user_name)
-    return jsonify({'success': True})
+@app.route('/')
+def home():
+    return render_template('home.html')
 
-@app.route('/create-system/<system_name>/<description>/<company>/<software>')
-def create_system(system_name, description, company, software):
-    print("Creating system...")
-    print(system_name)
-    print(description)
-    print(company)
-    print(software)
-    Create_System(system_name, description, company, software)
-    return jsonify({'success': True})
+@app.route('/add-user', methods=['GET', 'POST'])
+def add_userpage():
+    if request.method == 'POST':
+        user_name = request.form.get('user_name')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        department = request.form.get('department')
+        company = request.form.get('company')
+        company_email = request.form.get('company_email')
+        
+        Create_User(user_name, first_name, last_name, department, company, company_email)
+        
+    return render_template('Add_User.html', headers=getheader('USER_TABLE'), data=getdata('USER_TABLE'))
 
-@app.route('/delete-system/<system_name>')
-def delete_system(system_name):
-    print("Deleting system...")
-    print(system_name)
-    Delete_System(system_name)
-    return jsonify({'success': True})
+@app.route('/remove-user', methods=['GET', 'POST'])
+def delete_userpage():
+    if request.method == 'POST':
+        user_name = request.form.get('user_name')
+        
+        Delete_User(user_name)
+    return render_template('Remove_User.html', headers=getheader('USER_TABLE'), data=getdata('USER_TABLE'))
 
-@app.route('/add-system-access/<system_name>/<user_name>/<system_username>')
-def add_system_access(system_name, user_name, system_username):
-    print("Adding system access...")
-    print(system_name)
-    print(user_name)
-    print(system_username)
-    Add_system_access(system_name, user_name, system_username)
-    return jsonify({'success': True})
+@app.route('/add-system', methods=['GET', 'POST'])
+def add_systempage():
+    if request.method == 'POST':
+        system_name = request.form.get('system_name')
+        description = request.form.get('Description')
+        company = request.form.get('Company')
+        software = request.form.get('Software')
+        
+        Create_System(system_name, description, company, software)
+    return render_template('Add_System.html', headers=getheader('SYSTEM_TABLE'), data=getdata('SYSTEM_TABLE'))
 
-@app.route('/remove-system-access/<system_name>/<user_name>')
-def remove_system_access(system_name, user_name):
-    print("Removing system access...")
-    print(system_name)
-    print(user_name)
-    Delete_system_access(system_name, user_name)
-    return jsonify({'success': True})
+@app.route('/remove-system', methods=['GET', 'POST'])
+def delete_systempage():
+    if request.method == 'POST':
+        system_name = request.form.get('System_Name')
+        print(system_name)
+        Delete_System(system_name)
+    return render_template('Remove_System.html', headers=getheader('SYSTEM_TABLE'), data=getdata('SYSTEM_TABLE'))
+
+@app.route('/add-system-access', methods=['GET', 'POST'])
+def add_system_accesspage():
+    if request.method == 'POST':
+        user_name = request.form.get('user_name')
+        system_name = request.form.get('system_name')
+        system_user_name = request.form.get('system_User_Name')
+        Add_system_access(system_name, user_name, system_user_name)
+    return render_template('Add_System_Access.html', headers=getheader('SYSTEM_ACCESS_TABLE'), data=getdata('SYSTEM_ACCESS_TABLE'))
+
+@app.route('/remove-system-access', methods=['GET', 'POST'])
+def remove_system_accesspage():
+    if request.method == 'POST':
+        user_name = request.form.get('user_name')
+        system_name = request.form.get('System_Name')
+
+        Delete_system_access(system_name, user_name)
+    return render_template('Remove_System_Access.html', headers=getheader('SYSTEM_ACCESS_TABLE'), data=getdata('SYSTEM_ACCESS_TABLE'))
+
 
 
 if __name__ == '__main__':
