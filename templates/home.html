@@ -13,6 +13,19 @@
     <button type="button" onclick="window.location.href='add-system'">Add System</button>
     <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
 
-
+    <table border="1">
+        <tr>
+            {% for header in headers %}
+                <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in data %}
+            <tr>
+                {% for item in row %}
+                    <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

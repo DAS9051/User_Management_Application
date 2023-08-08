@@ -1,5 +1,6 @@
 import pyodbc 
 import requests
+import time
 
 conn = pyodbc.connect('Driver={SQL Server};'
                       'Server=LAPTOP\SQLEXPRESS;'
@@ -20,7 +21,7 @@ def ping():
 
 def Create_User(User_Name, First_Name, Last_Name, Department, Company, Company_Email_Address):
     Owner_User = "Admin"
-    Created_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Created_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = "INSERT INTO USER_TABLE(User_Name, First_Name, Last_Name, Department, Company, Company_Email_Address, Created_On, Changed_On, Removed) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);"
     cursor.execute(query, (User_Name, First_Name, Last_Name, Department, Company, Company_Email_Address, Created_On, Created_On, 'F'))
     conn.commit()
@@ -40,7 +41,7 @@ def Create_User(User_Name, First_Name, Last_Name, Department, Company, Company_E
 
 def Delete_User(User_Name):
     Owner_User = "Admin"
-    Changed_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Changed_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = f"UPDATE USER_TABLE SET Removed = 'T', Changed_On = '{Changed_On}' WHERE User_Name = '{User_Name}'"
     cursor.execute(query)
     conn.commit()
@@ -61,7 +62,7 @@ def Delete_User(User_Name):
 
 def Create_System(system_name, description, company, software):
     Owner_User = "Admin"
-    Created_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Created_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = "INSERT INTO SYSTEM_TABLE(System_Name, Description, Company, Software, Created_On, Changed_On, Removed) VALUES(?, ?, ?, ?, ?, ?, ?);"
     cursor.execute(query, (system_name, description, company, software, Created_On, Created_On, 'F'))
     conn.commit()
@@ -82,7 +83,7 @@ def Create_System(system_name, description, company, software):
 
 def Delete_System(system_name):
     Owner_User = "Admin"
-    Changed_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Changed_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = f"UPDATE SYSTEM_TABLE SET Removed = 'T', Changed_On = '{Changed_On}' WHERE System_Name = '{system_name}'"
     cursor.execute(query)
     conn.commit()
@@ -113,7 +114,7 @@ def Add_system_access(system_name, user_name, system_username):
         for i in cursor:
             Access_id = i[0] + 1
 
-    Changed_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Changed_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = f"INSERT INTO SYSTEM_ACCESS_TABLE(Access_id, System_Name, User_Name, Created_On, Changed_On, System_user_name, Removed) VALUES('{Access_id}', '{system_name}', '{user_name}', '{Changed_On}', '{Changed_On}', '{system_username}', 'F')"
     cursor.execute(query)
     conn.commit()
@@ -134,7 +135,7 @@ def Add_system_access(system_name, user_name, system_username):
 
 def Delete_system_access(system_name, user_name):
     Owner_User = "Admin"
-    Changed_On = requests.get('http://worldtimeapi.org/api/timezone/America/Toronto').json()['datetime']
+    Changed_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     query = f"UPDATE SYSTEM_ACCESS_TABLE SET Removed = 'T', Changed_On = '{Changed_On}' WHERE System_Name = '{system_name}' AND User_Name = '{user_name}'"
     cursor.execute(query)
     conn.commit()
@@ -164,3 +165,4 @@ def getdata(table):
     data = cursor.fetchall()
     return data
 # Create_User('JohnD', "John", "Doe", "Accounting", "Microsoft", "JohnDoe@gmail.com")
+

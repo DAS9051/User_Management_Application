@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
 
 @app.route('/add-user', methods=['GET', 'POST'])
 def add_userpage():
