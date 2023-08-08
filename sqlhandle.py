@@ -1,6 +1,8 @@
 import pyodbc 
 import requests
 import time
+from hashlib import sha256
+
 
 conn = pyodbc.connect('Driver={SQL Server};'
                       'Server=LAPTOP\SQLEXPRESS;'
@@ -13,9 +15,6 @@ cursor = conn.cursor()
 
 def ping():
     print("Pong")
-
-
-
 
         
 
@@ -164,5 +163,12 @@ def getdata(table):
     cursor.execute(f"SELECT * FROM {table}")
     data = cursor.fetchall()
     return data
-# Create_User('JohnD', "John", "Doe", "Accounting", "Microsoft", "JohnDoe@gmail.com")
 
+def correct_password(username, password):
+    cursor.execute(f"SELECT PASSWORD FROM LOGINS WHERE USERNAME = '{username}'")
+    for i in cursor:
+        if i[0] == sha256(password.encode('utf-8')).hexdigest():
+            return True
+        else:
+            return False
+    return False

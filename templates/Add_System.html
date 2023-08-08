@@ -4,37 +4,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .navigation {
+            background-color: #333;
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .navigation button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .navigation button:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .container2 {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 1200px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .container label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: -10px;
+        }
+
+        .container input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .container input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: center;
+            margin-top: 20px;
+            margin-left: 115px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <form method="POST">
-        <label for="System_Name">System Name:</label><br>
-        <input type="text" id="System_Name" name="system_name" value=""><br><br>
-    
-        <label for="Description">Description:</label><br>
-        <input type="text" id="Description" name="Description" value=""><br><br>
-    
-        <label for="Company">Company:</label><br> 
-        <input type="text" id="Company" name="Company" value=""><br><br>
-    
-        <label for="Software">Software:</label><br>
-        <input type="text" id="Software" name="Software" value=""><br><br>
-    
-        <input type="submit" value="Submit">
-    </form>
 
-    <table border="1">
-        <tr>
-            {% for header in headers %}
-                <th>{{ header }}</th>
-            {% endfor %}
-        </tr>
-        {% for row in data %}
+    <div class="navigation">\
+        <button type="button" onclick="window.location.href='home'">Home</button>
+        <button type="button" onclick="window.location.href='add-user'">Add User</button>
+        <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
+        <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
+        <button type="button" onclick="window.location.href='remove-system-access'">Remove System Access</button>
+        <button type="button" onclick="window.location.href='add-system'">Add System</button>
+        <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
+        <button type="button" onclick="window.location.href='logout'">Logout</button>
+    </div>
+
+    <div class="container">
+        <h1>Add System</h1>
+        <form method="POST">
+            <label for="System_Name">System Name:</label><br>
+            <input type="text" id="System_Name" name="system_name" value=""><br><br>
+        
+            <label for="Description">Description:</label><br>
+            <input type="text" id="Description" name="Description" value=""><br><br>
+        
+            <label for="Company">Company:</label><br> 
+            <input type="text" id="Company" name="Company" value=""><br><br>
+        
+            <label for="Software">Software:</label><br>
+            <input type="text" id="Software" name="Software" value=""><br><br>
+        
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div class = "container2">
+        <h1>Systems</h1>
+            {{ table|safe }}
+        <table border="1">
             <tr>
-                {% for item in row %}
-                    <td>{{ item }}</td>
+                {% for header in headers %}
+                    <th>{{ header }}</th>
                 {% endfor %}
             </tr>
-        {% endfor %}
-    </table>
+            {% for row in data %}
+                <tr>
+                    {% for item in row %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 </body>
 </html>

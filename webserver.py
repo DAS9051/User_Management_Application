@@ -1,16 +1,50 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, flash, session, redirect
 from sqlhandle import *
+from flask_session import Session
+
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if session.get('log') == True:
+        return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if correct_password(username, password):
+            session['log'] = True
+            return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+        else:
+            return render_template('login.html', error="Incorrect Username or Password")
 
+    return render_template('login.html')
 
-@app.route('/')
+@app.route('/home')
 def home():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+
+
+@app.route('/logout')
+def logout():
+    session['log'] = False
+    return redirect('/')
 
 @app.route('/add-user', methods=['GET', 'POST'])
 def add_userpage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         first_name = request.form.get('first_name')
@@ -25,6 +59,11 @@ def add_userpage():
 
 @app.route('/remove-user', methods=['GET', 'POST'])
 def delete_userpage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         
@@ -33,6 +72,11 @@ def delete_userpage():
 
 @app.route('/add-system', methods=['GET', 'POST'])
 def add_systempage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         system_name = request.form.get('system_name')
         description = request.form.get('Description')
@@ -44,6 +88,11 @@ def add_systempage():
 
 @app.route('/remove-system', methods=['GET', 'POST'])
 def delete_systempage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         system_name = request.form.get('System_Name')
         print(system_name)
@@ -52,6 +101,11 @@ def delete_systempage():
 
 @app.route('/add-system-access', methods=['GET', 'POST'])
 def add_system_accesspage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         system_name = request.form.get('system_name')
@@ -61,6 +115,11 @@ def add_system_accesspage():
 
 @app.route('/remove-system-access', methods=['GET', 'POST'])
 def remove_system_accesspage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         system_name = request.form.get('System_Name')
