@@ -106,11 +106,30 @@
         th {
             background-color: #f2f2f2;
         }
+
+        /* Additional filter input styles */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .filter-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .filter-container input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="navigation">\
+    <div class="navigation">
         <button type="button" onclick="window.location.href='home'">Home</button>
         <button type="button" onclick="window.location.href='add-user'">Add User</button>
         <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
@@ -140,9 +159,36 @@
         </form>
     </div>
 
-    <div class = "container2">
-        <h1>Systems</h1>
-            {{ table|safe }}
+    <div class="container2">
+        <h1>System Table</h1>
+        <label for="showRemoved">Show Removed</label>
+        <input type="checkbox" id="showRemoved" onchange="toggleRemoved()">
+        <br><br><br>
+        <div class="filter-container">
+            <label for="filterSystemName">Filter by System Name:</label>
+            <input type="text" id="filterSystemName" onkeyup="filterTable()" placeholder="Search for System Names...">
+        </div>
+        <div class="filter-container">
+            <label for="filterDescription">Filter by Description:</label>
+            <input type="text" id="filterDescription" onkeyup="filterTable()" placeholder="Search for Descriptions...">
+        </div>
+        <div class="filter-container">
+            <label for="filterCompany">Filter by Company:</label>
+            <input type="text" id="filterCompany" onkeyup="filterTable()" placeholder="Search for Companies...">
+        </div>
+        <div class="filter-container">
+            <label for="filterSoftware">Filter by Software:</label>
+            <input type="text" id="filterSoftware" onkeyup="filterTable()" placeholder="Search for Software...">
+        </div>
+        <div class="filter-container">
+            <label for="filterCreatedOn">Filter by Created On:</label>
+            <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
+        </div>
+        <div class="filter-container">
+            <label for="filterChangedOn">Filter by Changed On:</label>
+            <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
+        </div>
+        <br><br><br>
         <table border="1">
             <tr>
                 {% for header in headers %}
@@ -150,7 +196,7 @@
                 {% endfor %}
             </tr>
             {% for row in data %}
-                <tr>
+                <tr class="{% if row.removed == 'T' %}removedRow{% endif %}">
                     {% for item in row %}
                         <td>{{ item }}</td>
                     {% endfor %}
@@ -158,6 +204,63 @@
             {% endfor %}
         </table>
     </div>
+
+    <script>
+        function filterTable() {
+            const filterSystemName = document.getElementById("filterSystemName").value.toUpperCase();
+            const filterDescription = document.getElementById("filterDescription").value.toUpperCase();
+            const filterCompany = document.getElementById("filterCompany").value.toUpperCase();
+            const filterSoftware = document.getElementById("filterSoftware").value.toUpperCase();
+            const filterCreatedOn = document.getElementById("filterCreatedOn").value.toUpperCase();
+            const filterChangedOn = document.getElementById("filterChangedOn").value.toUpperCase();
+    
+            const table = document.querySelector(".container2 table");
+            const rows = table.getElementsByTagName("tr");
+    
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                const systemNameData = cells[0].textContent.trim().toUpperCase();
+                const descriptionData = cells[1].textContent.trim().toUpperCase();
+                const companyData = cells[2].textContent.trim().toUpperCase();
+                const softwareData = cells[3].textContent.trim().toUpperCase();
+                const createdOnData = cells[4].textContent.trim().toUpperCase();
+                const changedOnData = cells[5].textContent.trim().toUpperCase();
+    
+                const systemNameMatch = systemNameData.includes(filterSystemName);
+                const descriptionMatch = descriptionData.includes(filterDescription);
+                const companyMatch = companyData.includes(filterCompany);
+                const softwareMatch = softwareData.includes(filterSoftware);
+                const createdOnMatch = createdOnData.includes(filterCreatedOn);
+                const changedOnMatch = changedOnData.includes(filterChangedOn);
+    
+                rows[i].style.display =
+                    systemNameMatch && descriptionMatch && companyMatch &&
+                    softwareMatch && createdOnMatch && changedOnMatch ? "" : "none";
+            }
+        }
+    
+        function toggleRemoved() {
+            const showRemoved = document.getElementById("showRemoved").checked;
+            const rows = document.querySelector(".container2 table").getElementsByTagName("tr");
+    
+            for (let i = 1; i < rows.length; i++) {
+                const removedCell = rows[i].querySelector('td:last-child');
+                if (showRemoved || removedCell.textContent.trim() === 'F') {
+                    rows[i].style.display = "table-row";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("showRemoved").addEventListener("change", toggleRemoved);
+    
+            // Call the function initially to set the initial state
+            toggleRemoved();
+        });
+    </script>
+    
 
 </body>
 </html>

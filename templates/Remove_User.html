@@ -105,6 +105,25 @@
         th {
             background-color: #f2f2f2;
         }
+
+        /* Additional filter input styles */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .filter-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .filter-container input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -132,21 +151,127 @@
     </div>
 
     <div class="container2">
-        <h1>Users</h1>
-        <table border="1">
+        <h1>User Table</h1>
+        <label for="showRemoved">Show Removed</label>
+        <input type="checkbox" id="showRemoved" onchange="toggleRemoved()">
+        <br><br><br>
+        <div class="filter-container">
+            <label for="filterUserName">Filter by User Name:</label>
+            <input type="text" id="filterUserName" onkeyup="filterTable()" placeholder="Search for User Names...">
+        </div>
+        <!-- Repeat for other columns -->
+        <div class="filter-container">
+            <label for="filterFirstName">Filter by First Name:</label>
+            <input type="text" id="filterFirstName" onkeyup="filterTable()" placeholder="Search First Names...">
+        </div>
+
+        <div class="filter-container">
+            <label for="filterLastName">Filter by Last Name:</label>
+            <input type="text" id="filterLastName" onkeyup="filterTable()" placeholder="Search for Last Names...">
+        </div>
+
+        <div class="filter-container">
+            <label for="filterDepartment">Filter by Department:</label>
+            <input type="text" id="filterDepartment" onkeyup="filterTable()" placeholder="Search for Departments...">
+        </div>
+
+        <div class="filter-container">
+            <label for="filterCompany">Filter by Company:</label>
+            <input type="text" id="filterCompany" onkeyup="filterTable()" placeholder="Search for Company...">
+        </div>
+        
+        <div class="filter-container">
+            <label for="filterCompanyEmail">Filter by Company Email:</label>
+            <input type="text" id="filterCompanyEmail" onkeyup="filterTable()" placeholder="Search for Company Email...">
+        </div>
+
+        <div class="filter-container">
+            <label for="filterCreatedOn">Filter by Created On:</label>
+            <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
+        </div>
+
+        <div class="filter-container">
+            <label for="filterRemoved">Filter by Changed On:</label>
+            <input type="text" id="filterRemoved" onkeyup="filterTable()" placeholder="Search for Changed On...">
+        </div>
+        <br><br><br>
+        <table id="userTable" border="1">
             <tr>
                 {% for header in headers %}
                     <th>{{ header }}</th>
                 {% endfor %}
             </tr>
             {% for row in data %}
-                <tr>
+                <tr class="{% if row.removed == 'T' %}removedRow{% endif %}">
                     {% for item in row %}
                         <td>{{ item }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
         </table>
-    </div>    
+    </div>
+
+    <script>
+        function filterTable() {
+            const filterUserName = document.getElementById("filterUserName").value.toUpperCase();
+            const filterFirstName = document.getElementById("filterFirstName").value.toUpperCase();
+            const filterLastName = document.getElementById("filterLastName").value.toUpperCase();
+            const filterDepartment = document.getElementById("filterDepartment").value.toUpperCase();
+            const filterCompany = document.getElementById("filterCompany").value.toUpperCase();
+            const filterCompanyEmail = document.getElementById("filterCompanyEmail").value.toUpperCase();
+            const filterCreatedOn = document.getElementById("filterCreatedOn").value.toUpperCase();
+            const filterRemoved = document.getElementById("filterRemoved").value.toUpperCase();
+
+            const table = document.getElementById("userTable");
+            const rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                const userNameData = cells[0].textContent.trim().toUpperCase();
+                const firstNameData = cells[1].textContent.trim().toUpperCase();
+                const lastNameData = cells[2].textContent.trim().toUpperCase();
+                const departmentData = cells[3].textContent.trim().toUpperCase();
+                const companyData = cells[4].textContent.trim().toUpperCase();
+                const companyEmailData = cells[5].textContent.trim().toUpperCase();
+                const createdOnData = cells[6].textContent.trim().toUpperCase();
+                const removedData = cells[7].textContent.trim().toUpperCase();
+
+                const userNameMatch = userNameData.includes(filterUserName);
+                const firstNameMatch = firstNameData.includes(filterFirstName);
+                const lastNameMatch = lastNameData.includes(filterLastName);
+                const departmentMatch = departmentData.includes(filterDepartment);
+                const companyMatch = companyData.includes(filterCompany);
+                const companyEmailMatch = companyEmailData.includes(filterCompanyEmail);
+                const createdOnMatch = createdOnData.includes(filterCreatedOn);
+                const removedMatch = removedData.includes(filterRemoved);
+
+                rows[i].style.display = userNameMatch && firstNameMatch && lastNameMatch &&
+                                      departmentMatch && companyMatch && companyEmailMatch &&
+                                      createdOnMatch && removedMatch ? "" : "none";
+            }
+        }
+
+
+        function toggleRemoved() {
+            const showRemoved = document.getElementById("showRemoved").checked;
+            const rows = document.querySelector(".container2 table").getElementsByTagName("tr");
+    
+            for (let i = 1; i < rows.length; i++) {
+                const removedCell = rows[i].querySelector('td:last-child');
+                if (showRemoved || removedCell.textContent.trim() === 'F') {
+                    rows[i].style.display = "table-row";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("showRemoved").addEventListener("change", toggleRemoved);
+    
+            // Call the function initially to set the initial state
+            toggleRemoved();
+        });
+    </script>
 </body>
 </html>

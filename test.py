@@ -1,8 +1,13 @@
-from hashlib import sha256
+import pyodbc
 
 
+conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=LAPTOP\SQLEXPRESS;'
+                      'Database=User Management Application;'
+                      'Trusted_Connection=yes;')
 
-password = "hello"
-password = sha256(password.encode('utf-8')).hexdigest()
-print(password)
-print(len(password))
+cursor = conn.cursor()
+
+
+cursor.execute("INSERT INTO Audit_Trail (column1, column2, ...) VALUES (%s, %s, ...)", (value1, value2, ...))
+conn.commit()

@@ -104,6 +104,25 @@
         th {
             background-color: #f2f2f2;
         }
+
+        /* Additional filter input styles */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .filter-container label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .filter-container input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -134,8 +153,36 @@
         </form>
     </div>
 
-    <div class = "container2">
+    
+    <div class="container2">
         <h1>System Access Table</h1>
+        
+        <label for="showRemoved">Show Removed</label>
+        <input type="checkbox" id="showRemoved" onchange="toggleRemoved()">
+        <br><br><br>
+        <!-- Filter inputs for User Name, System Name, and System User Name -->
+        <div class="filter-container">
+            <label for="filterUserName">Filter by User Name:</label>
+            <input type="text" id="filterUserName" onkeyup="filterTable()" placeholder="Search for User Names...">
+        </div>
+        <div class="filter-container">
+            <label for="filterSystemName">Filter by System Name:</label>
+            <input type="text" id="filterSystemName" onkeyup="filterTable()" placeholder="Search for System Names...">
+        </div>
+        <div class="filter-container">
+            <label for="filterSystemUserName">Filter by System User Name:</label>
+            <input type="text" id="filterSystemUserName" onkeyup="filterTable()" placeholder="Search for System User Names...">
+        </div>
+        <div class="filter-container">
+            <label for="filterCreatedOn">Filter by Created On:</label>
+            <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
+        </div>
+        <div class="filter-container">
+            <label for="filterChangedOn">Filter by Changed On:</label>
+            <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
+        </div>
+        
+        <br><br><br>
         <table border="1">
             <tr>
                 {% for header in headers %}
@@ -151,5 +198,59 @@
             {% endfor %}
         </table>
     </div>
+
+    <script>
+        function filterTable() {
+            const filterUserName = document.getElementById("filterUserName").value.toUpperCase();
+            const filterSystemName = document.getElementById("filterSystemName").value.toUpperCase();
+            const filterSystemUserName = document.getElementById("filterSystemUserName").value.toUpperCase();
+            const filterCreatedOn = document.getElementById("filterCreatedOn").value.toUpperCase();
+            const filterChangedOn = document.getElementById("filterChangedOn").value.toUpperCase();
+    
+            const table = document.querySelector(".container2 table");
+            const rows = table.getElementsByTagName("tr");
+    
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                const userNameData = cells[1].textContent.trim().toUpperCase();
+                const systemNameData = cells[2].textContent.trim().toUpperCase();
+                const systemUserNameData = cells[3].textContent.trim().toUpperCase();
+                const createdOnData = cells[4].textContent.trim().toUpperCase();
+                const changedOnData = cells[5].textContent.trim().toUpperCase();
+    
+                const userNameMatch = userNameData.includes(filterUserName);
+                const systemNameMatch = systemNameData.includes(filterSystemName);
+                const systemUserNameMatch = systemUserNameData.includes(filterSystemUserName);
+                const createdOnMatch = createdOnData.includes(filterCreatedOn);
+                const changedOnMatch = changedOnData.includes(filterChangedOn);
+    
+                rows[i].style.display =
+                    userNameMatch && systemNameMatch && systemUserNameMatch &&
+                    createdOnMatch && changedOnMatch ? "" : "none";
+            }
+        }
+
+        function toggleRemoved() {
+            const showRemoved = document.getElementById("showRemoved").checked;
+            const rows = document.querySelector(".container2 table").getElementsByTagName("tr");
+    
+            for (let i = 1; i < rows.length; i++) {
+                const removedCell = rows[i].querySelector('td:last-child');
+                if (showRemoved || removedCell.textContent.trim() === 'F') {
+                    rows[i].style.display = "table-row";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("showRemoved").addEventListener("change", toggleRemoved);
+    
+            // Call the function initially to set the initial state
+            toggleRemoved();
+        });
+
+    </script>
 </body>
 </html>
