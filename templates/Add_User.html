@@ -47,6 +47,7 @@
             border-radius: 4px;
             cursor: pointer;
             animation: fade-in 0.5s ease-out;
+            margin-top: 3px;
         }
 
         .navigation button:hover {
@@ -189,21 +190,52 @@
             margin: 0;
             text-align: left; /* Align the flash messages to the left */
         }
+
+        .leftNav {
+            margin-right: auto;
+        }
+
+        .rightNav {
+            margin-left: auto;
+        }
+
+        button {
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .options {
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="navigation">
-        <button type="button" onclick="window.location.href='home'">Home</button>
-        <button type="button" onclick="window.location.href='add-user'">Add User</button>
-        <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
-        <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
-        <button type="button" onclick="window.location.href='remove-system-access'">Remove System Access</button>
-        <button type="button" onclick="window.location.href='add-system'">Add System</button>
-        <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
-        <button type="button" onclick="window.location.href='logout'">Logout</button>
-
-
+        <div class="leftNav">
+            <a class="options">Navigation</a>
+            <br>
+            <button type="button" onclick="window.location.href='home'">Home</button>
+            <button type="button" onclick="window.location.href='add-user'">Add User</button>
+            <button type="button" onclick="window.location.href='remove-user'">Manage Users</button>
+            <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
+            <button type="button" onclick="window.location.href='remove-system-access'">Manage System Access</button>
+            <button type="button" onclick="window.location.href='add-system'">Add System</button>
+            <button type="button" onclick="window.location.href='remove-system'">Manage Systems</button>
+        </div>
+        <div class="rightNav">
+            <a class="options">Account Options</a>
+            <br>
+            <button type="button" onclick="window.location.href='change-password'">Change Password</button>
+            <button type="button" onclick="window.location.href='create-account'">Create New User</button>
+            <button type="button" onclick="window.location.href='logout'">Logout</button>
+        </div>
     </div>
     
      

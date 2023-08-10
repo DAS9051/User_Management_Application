@@ -18,9 +18,11 @@ def login():
         if correct_password(username, password):
             session['log'] = True
             session['username'] = username
+            auditlog(username, 'Logged In')
             return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
         else:
             flash('Incorrect Username or Password', 'danger')
+            auditlog(username, 'Failed Log In')
             return render_template('login.html', error="Incorrect Username or Password")
 
     return render_template('login.html')
@@ -38,6 +40,7 @@ def home():
 @app.route('/logout')
 def logout():
     session['log'] = False
+    auditlog(session['username'], 'Logged Out')
     return redirect('/')
 
 @app.route('/add-user', methods=['GET', 'POST'])
@@ -84,11 +87,20 @@ def delete_userpage():
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         print(user_name)
-        if (Delete_User(user_name, session['username'])):
-            flash(('Successfully Deleted User', 'success'))
+
+        if ('submit_button' in request.form):
+            if (Delete_User(user_name, session['username'])):
+                flash(('Successfully Deleted User', 'success'))
+            else:
+                flash(('Failed to Delete User', 'danger'))
+        
         else:
-            flash(('Failed to Delete User', 'danger'))
-    
+            if (Restore_User(user_name, session['username'])):
+                flash(('Successfully Restored User', 'success'))
+            else:
+                flash(('Failed to Restore User', 'danger'))
+
+
     head = getheader('USER_TABLE')
     head[0] = 'User Name'
     head[1] = 'First Name'
@@ -138,12 +150,20 @@ def delete_systempage():
         return redirect('/')
     if request.method == 'POST':
         system_name = request.form.get('System_Name')
-
-        if (Delete_System(system_name, session['username'])):
-            flash(('Successfully Deleted System', 'success'))
+        if ('submit_button' in request.form):
+            print("Delete")
+            if (Delete_System(system_name, session['username'])):
+                flash(('Successfully Deleted System', 'success'))
+            else:
+                flash(('Failed to Delete System', 'danger'))
+            # Delete_System(system_name, session['username'])
         else:
-            flash(('Failed to Delete System', 'danger'))
-        # Delete_System(system_name, session['username'])
+            print("Restore")
+            if (Restore_System(system_name, session['username'])):
+                flash(('Successfully Restored System', 'success'))
+            else:
+                flash(('Failed to Restore System', 'danger'))
+            Restore_System(system_name, session['username'])
 
     head = getheader('SYSTEM_TABLE')
     head[0] = 'System Name'
@@ -179,7 +199,7 @@ def add_system_accesspage():
     head[4] = 'Created On'
     head[5] = 'Changed On'
     head[6] = 'Removed'
-    return render_template('Add_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), systems=dropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),users=dropDown('USER_TABLE', 'USER_NAME'))   
+    return render_template('Add_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), systems=sdropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),users=sdropDown('USER_TABLE', 'USER_NAME'))   
 
 @app.route('/remove-system-access', methods=['GET', 'POST'])
 def remove_system_accesspage():
@@ -192,13 +212,19 @@ def remove_system_accesspage():
         user_name = request.form.get('user_name')
         system_name = request.form.get('System_Name')
         system_username = request.form.get('System_User_Name')
-
-        if (Delete_system_access(system_name, user_name, session['username'], system_username)):
-            flash(('Successfully Deleted System Access', 'success'))
+        if ('submit_button' in request.form):
+        
+            if (Delete_system_access(system_name, user_name, session['username'], system_username)):
+                flash(('Successfully Deleted System Access', 'success'))
+            else:
+                flash(('Failed to Delete System Access', 'danger'))
+            # Delete_system_access(system_name, user_name, session['username'], system_username)
         else:
-            flash(('Failed to Delete System Access', 'danger'))
-        # Delete_system_access(system_name, user_name, session['username'], system_username)
-    
+            if (Restore_system_access(system_name, user_name, session['username'], system_username)):
+                flash(('Successfully Restored System Access', 'success'))
+            else:
+                flash(('Failed to Restore System Access', 'danger'))
+            # Restore_system_access(system_name, user_name, session['username'], system_username)
     head = getheader('SYSTEM_ACCESS_TABLE')
     head[0] = 'Access ID'
     head[1] = 'User Name'
@@ -211,6 +237,46 @@ def remove_system_accesspage():
     return render_template('Remove_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), users=dropDown('SYSTEM_ACCESS_TABLE', 'USER_NAME'), systems=dropDown('SYSTEM_ACCESS_TABLE', 'SYSTEM_NAME'),system_users=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'), system_username=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'))
 
 
+@app.route('/create-account', methods=['GET', 'POST'])
+def create_accountpage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        comfirm_password = request.form.get('comfirm_password')
+        if (password == comfirm_password):
+            if (Create_Account(username, password, session['username'])):
+                flash(('Successfully Created Account', 'success'))
+            else:
+                flash(('Failed to Create Account', 'danger'))
+        else:
+            flash(('Passwords Do Not Match', 'danger'))
+    return render_template('Create_Account.html')
 
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_passwordpage():
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
+    if request.method == 'POST':
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        comfirm_password = request.form.get('comfirm_password')
+        if (new_password == comfirm_password):
+            if (Change_Password(old_password, new_password, session['username'])):
+                flash(('Successfully Changed Password', 'success'))
+            else:
+                flash(('Password Change Failed', 'danger'))
+        else:
+            flash(('Passwords Do Not Match', 'danger'))
+
+    return render_template('Change_Password.html')
+    
 if __name__ == '__main__':
     app.run(debug=True)

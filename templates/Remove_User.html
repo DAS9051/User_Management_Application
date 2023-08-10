@@ -46,6 +46,7 @@
             border-radius: 4px;
             cursor: pointer;
             animation: fade-in 0.5s ease-out;
+            margin-top: 3px;
         }
 
         .navigation button:hover {
@@ -88,8 +89,8 @@
             border-radius: 4px;
         }
 
-        .container input[type="submit"] {
-            background-color: #007bff;
+        .container input[type="submit1"] {
+            background-color: #911d1d;
             color: white;
             border: none;
             border-radius: 4px;
@@ -97,8 +98,21 @@
             cursor: pointer;
         }
 
-        .container input[type="submit"]:hover {
-            background-color: #0056b3;
+        .container input[type="submit1"]:hover {
+            background-color: #ff0000;
+        }
+
+        .container input[type="submit2"] {
+            background-color: #245d1f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .container input[type="submit2"]:hover {
+            background-color: #1be447;
         }
 
         table {
@@ -176,24 +190,57 @@
             margin: 0;
             text-align: left; /* Align the flash messages to the left */
         }
+
+        .leftNav {
+            margin-right: auto;
+        }
+
+        .rightNav {
+            margin-left: auto;
+        }
+
+        button {
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .options {
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
 </body>
 
-    <div class="navigation">
+<div class="navigation">
+    <div class="leftNav">
+        <a class="options">Navigation</a>
+        <br>
         <button type="button" onclick="window.location.href='home'">Home</button>
         <button type="button" onclick="window.location.href='add-user'">Add User</button>
-        <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
+        <button type="button" onclick="window.location.href='remove-user'">Manage Users</button>
         <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
-        <button type="button" onclick="window.location.href='remove-system-access'">Remove System Access</button>
+        <button type="button" onclick="window.location.href='remove-system-access'">Manage System Access</button>
         <button type="button" onclick="window.location.href='add-system'">Add System</button>
-        <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
+        <button type="button" onclick="window.location.href='remove-system'">Manage Systems</button>
+    </div>
+    <div class="rightNav">
+        <a class="options">Account Options</a>
+        <br>
+        <button type="button" onclick="window.location.href='change-password'">Change Password</button>
+        <button type="button" onclick="window.location.href='create-account'">Create New User</button>
         <button type="button" onclick="window.location.href='logout'">Logout</button>
     </div>
+</div>
 
     <div class="container">
-        <h1>Remove User</h1>
+        <h1>Manage Users</h1>
         <form method="POST">
 
             <label for="user_name">User Name:</label><br>
@@ -205,7 +252,9 @@
             </datalist>
             <br><br>
 
-            <input type="submit" value="Submit">
+            <input type="submit1" name="submit_button" value="Remove">
+            <br><br>
+            <input type="submit2" name="restore_button" value="Restore">
         </form>
     </div>
     <br>
