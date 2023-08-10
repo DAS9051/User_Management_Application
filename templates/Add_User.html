@@ -15,7 +15,19 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            animation: fade-in 0.5s ease-out;
         }
+
+        /* Keyframes for the fade-in animation */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
 
         .navigation {
             background-color: #333;
@@ -24,6 +36,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button {
@@ -33,6 +46,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button:hover {
@@ -44,9 +58,10 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            width: 500px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container2 {
@@ -57,6 +72,7 @@
             width: 1200px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container label {
@@ -87,23 +103,30 @@
         }
 
         table {
-            width: 20%;
+            width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            margin-left: 18px;
-        }
-
-        table, th, td {
             border: 1px solid #ccc;
+            table-layout: fixed;
         }
 
-        th, td {
-            padding: 8px;
-            text-align: center;
+        .table2 {
+            border: none;
         }
 
         th {
-            background-color: #f2f2f2;
+            padding: 5px;
+            background-color: rgb(186, 188, 186);
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
         }
 
         table tr.removedRow {
@@ -128,6 +151,44 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
+        .submit-container {
+            margin-top: 30px;
+        }
+
+        /* Add these styles to your existing <style> block */
+        .success {
+            color: green;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .flashes-container {
+            text-align: center;
+            display: flex;
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            margin-top: 10px;
+            height: 30px; /* Set a fixed height or adjust as needed */
+        }
+
+        .flashes {
+            display: inline-block;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+            text-align: left; /* Align the flash messages to the left */
+        }
     </style>
 </head>
 
@@ -141,34 +202,69 @@
         <button type="button" onclick="window.location.href='add-system'">Add System</button>
         <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
         <button type="button" onclick="window.location.href='logout'">Logout</button>
-        
-   
-    </div>
 
+
+    </div>
+    
+     
+    
     <div class="container">
         <h1>Add User</h1>
         <form method="POST">
-            <label for="user_name">User Name:</label><br>
-            <input type="text" id="user_name" name="user_name" value=""><br><br>
+            <table class="table2">
+                <tr>
+                    <td>
+                        <label for="user_name">User Name:</label><br>
+                        <input type="text" id="user_name" name="user_name" value="" placeholder="Enter User Names">
+                    </td>
+                    <td>
+                        <label for="first_name">First name:</label><br>
+                        <input type="text" id="first_name" name="first_name" value="" placeholder="Enter First Name">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="last_name">Last name:</label><br>
+                        <input type="text" id="last_name" name="last_name" value="" placeholder="Enter Last Name">
+                    </td>
+                    <td>
+                        <label for="department">Department:</label><br>
+                        <input type="text" id="department" name="department" value="" placeholder="Enter Department">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="company">Company:</label><br>
+                        <input type="text" id="company" name="company" value="" placeholder="Enter Company">
+                    </td>
+                    <td>
+                        <label for="company_email">Company Email Address:</label><br>
+                        <input type="text" id="company_email" name="company_email" value=""
+                            placeholder="Enter Company Email">
+                    </td>
+                </tr>
+            </table>
 
-            <label for="first_name">First name:</label><br>
-            <input type="text" id="first_name" name="first_name" value=""><br><br>
-
-            <label for="last_name">Last name:</label><br>
-            <input type="text" id="last_name" name="last_name" value=""><br><br>
-
-            <label for="department">Department:</label><br>
-            <input type="text" id="department" name="department" value=""><br><br>
-
-            <label for="company">Company:</label><br>
-            <input type="text" id="company" name="company" value=""><br><br>
-
-            <label for="company_email">Company Email Address:</label><br>
-            <input type="text" id="company_email" name="company_email" value=""><br><br>
-
-            <input type="submit" value="Submit">
+            <!-- Submit Button -->
+            <div class="submit-container">
+                <input type="submit" value="Submit">
+            </div>
         </form>
     </div>
+
+    <div class="flashes-container" style="left: 10px;">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li><a class="{{ message[1] }}">{{ message[0] }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    
+    
     <div class="container2">
         <h1>User Table</h1>
         <label for="showRemoved">Show Removed</label>
@@ -198,10 +294,11 @@
             <label for="filterCompany">Filter by Company:</label>
             <input type="text" id="filterCompany" onkeyup="filterTable()" placeholder="Search for Company...">
         </div>
-        
+
         <div class="filter-container">
             <label for="filterCompanyEmail">Filter by Company Email:</label>
-            <input type="text" id="filterCompanyEmail" onkeyup="filterTable()" placeholder="Search for Company Email...">
+            <input type="text" id="filterCompanyEmail" onkeyup="filterTable()"
+                placeholder="Search for Company Email...">
         </div>
 
         <div class="filter-container">
@@ -214,18 +311,18 @@
             <input type="text" id="filterRemoved" onkeyup="filterTable()" placeholder="Search for Changed On...">
         </div>
         <br><br><br>
-        <table id = 'userTable' border="1">
+        <table id='userTable' border="1" style="max-width: 100%; margin: 0 auto;">
             <tr>
                 {% for header in headers %}
-                    <th>{{ header }}</th>
+                <th>{{ header }}</th>
                 {% endfor %}
             </tr>
             {% for row in data %}
-                <tr class="{% if row.removed == 'T' %}removedRow{% endif %}">
-                    {% for item in row %}
-                        <td>{{ item }}</td>
-                    {% endfor %}
-                </tr>
+            <tr class="{% if row.removed == 'T' %}removedRow{% endif %}">
+                {% for item in row %}
+                <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
         </table>
     </div>
@@ -266,8 +363,8 @@
                 const removedMatch = removedData.includes(filterRemoved);
 
                 rows[i].style.display = userNameMatch && firstNameMatch && lastNameMatch &&
-                                      departmentMatch && companyMatch && companyEmailMatch &&
-                                      createdOnMatch && removedMatch ? "" : "none";
+                    departmentMatch && companyMatch && companyEmailMatch &&
+                    createdOnMatch && removedMatch ? "" : "none";
             }
         }
 
@@ -275,7 +372,7 @@
         function toggleRemoved() {
             const showRemoved = document.getElementById("showRemoved").checked;
             const rows = document.querySelector(".container2 table").getElementsByTagName("tr");
-    
+
             for (let i = 1; i < rows.length; i++) {
                 const removedCell = rows[i].querySelector('td:last-child');
                 if (showRemoved || removedCell.textContent.trim() === 'F') {
@@ -285,10 +382,10 @@
                 }
             }
         }
-    
+
         document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("showRemoved").addEventListener("change", toggleRemoved);
-    
+
             // Call the function initially to set the initial state
             toggleRemoved();
         });

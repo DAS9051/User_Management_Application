@@ -14,6 +14,17 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        /* Keyframes for the fade-in animation */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
 
         .navigation {
@@ -23,6 +34,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button {
@@ -32,6 +44,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button:hover {
@@ -46,6 +59,7 @@
             width: 300px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container2 {
@@ -56,6 +70,7 @@
             width: 1200px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container label {
@@ -86,24 +101,26 @@
         }
 
         table {
-            width: 80%;
+            width: 100%;
             border-collapse: collapse;
-            margin: center;
             margin-top: 20px;
-            margin-left: 115px;
-        }
-
-        table, th, td {
             border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: center;
+            table-layout: fixed;
         }
 
         th {
-            background-color: #f2f2f2;
+            padding: 5px;
+            background-color: rgb(186, 188, 186);
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
         }
 
          /* Additional filter input styles */
@@ -124,6 +141,40 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
+        /* Add these styles to your existing <style> block */
+        .success {
+            color: green;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .flashes-container {
+            text-align: center;
+            display: flex;
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            margin-top: 10px;
+            height: 30px; /* Set a fixed height or adjust as needed */
+        }
+
+        .flashes {
+            display: inline-block;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+            text-align: left; /* Align the flash messages to the left */
+        }
     </style>
 </head>
 <body>
@@ -138,17 +189,34 @@
         <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
         <button type="button" onclick="window.location.href='logout'">Logout</button>
     </div>
-
+    
     <div class="container">
         <h1>Remove System</h1>
         <form method="POST">
             <label for="System_Name">System Name:</label><br>
-            <input type="text" id="System_Name" name="System_Name" value=""><br><br>
-        
+            <input type="text" id="System_Name" name="System_Name" list="System_list" placeholder="Enter or Select System Name"><br><br>
+            <datalist id="System_list">
+                {% for system in systems %}
+                    <option value="{{system}}">{{user}}</option>
+                {% endfor %}
+            </datalist>
             <input type="submit" value="Submit">
         </form>
     </div>
-
+    <br>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <a class="{{ message[1] }}">{{ message[0] }}</a>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block body %}{% endblock %}
+    </div>
+    
     <div class="container2">
         <h1>System Table</h1>
         <label for="showRemoved">Show Removed</label>
@@ -179,7 +247,7 @@
             <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
         </div>
         <br><br><br>
-        <table border="1">
+        <table border="1" style="max-width: 100%; margin: 0 auto;">
             <tr>
                 {% for header in headers %}
                     <th>{{ header }}</th>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,19 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            animation: fade-in 0.5s ease-out;
         }
+
+        /* Keyframes for the fade-in animation */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
 
         .navigation {
             background-color: #333;
@@ -23,6 +36,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button {
@@ -32,6 +46,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            animation: fade-in 0.5s ease-out;
         }
 
         .navigation button:hover {
@@ -46,6 +61,7 @@
             width: 300px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container2 {
@@ -56,6 +72,7 @@
             width: 1000px;
             text-align: center;
             margin-top: 20px;
+            animation: fade-in 0.5s ease-out;
         }
 
         .container label {
@@ -86,24 +103,28 @@
         }
 
         table {
-            width: 80%;
+            width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            margin-left: 45px;
-        }
-
-        table, th, td {
             border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: center;
+            table-layout: fixed;
         }
 
         th {
-            background-color: #f2f2f2;
+            padding: 5px;
+            background-color: rgb(186, 188, 186);
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
         }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
+        }
+
 
         /* Additional filter input styles */
         .filter-container {
@@ -123,80 +144,145 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
+        /* Add these styles to your existing <style> block */
+        .success {
+            color: green;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .flashes-container {
+            text-align: center;
+            display: flex;
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            margin-top: 10px;
+            height: 30px; /* Set a fixed height or adjust as needed */
+        }
+
+        .flashes {
+            display: inline-block;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+            text-align: left; /* Align the flash messages to the left */
+        }
     </style>
 </head>
+
 <body>
-</body>
 
-    <div class="navigation">
-        <button type="button" onclick="window.location.href='home'">Home</button>
-        <button type="button" onclick="window.location.href='add-user'">Add User</button>
-        <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
-        <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
-        <button type="button" onclick="window.location.href='remove-system-access'">Remove System Access</button>
-        <button type="button" onclick="window.location.href='add-system'">Add System</button>
-        <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
-        <button type="button" onclick="window.location.href='logout'">Logout</button>
-    </div>
+<div class="navigation">
+    <button type="button" onclick="window.location.href='home'">Home</button>
+    <button type="button" onclick="window.location.href='add-user'">Add User</button>
+    <button type="button" onclick="window.location.href='remove-user'">Remove User</button>
+    <button type="button" onclick="window.location.href='add-system-access'">Add System Access</button>
+    <button type="button" onclick="window.location.href='remove-system-access'">Remove System Access</button>
+    <button type="button" onclick="window.location.href='add-system'">Add System</button>
+    <button type="button" onclick="window.location.href='remove-system'">Remove System</button>
+    <button type="button" onclick="window.location.href='logout'">Logout</button>
+</div>
 
-    <div class="container">
-        <h1>Remove System Access</h1>
-        <form method="POST">
-            <label for="System_Name">System Name:</label><br>
-            <input type="text" id="System_Name" name="System_Name" value=""><br><br>
-        
-            <label for="user_name">User Name:</label><br>
-            <input type="text" id="user_name" name="user_name" value=""><br><br>
-        
-
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-    
-    <div class="container2">
-        <h1>System Access Table</h1>
-        
-        <label for="showRemoved">Show Removed</label>
-        <input type="checkbox" id="showRemoved" onchange="toggleRemoved()">
-        <br><br><br>
-        <!-- Filter inputs for User Name, System Name, and System User Name -->
-        <div class="filter-container">
-            <label for="filterUserName">Filter by User Name:</label>
-            <input type="text" id="filterUserName" onkeyup="filterTable()" placeholder="Search for User Names...">
-        </div>
-        <div class="filter-container">
-            <label for="filterSystemName">Filter by System Name:</label>
-            <input type="text" id="filterSystemName" onkeyup="filterTable()" placeholder="Search for System Names...">
-        </div>
-        <div class="filter-container">
-            <label for="filterSystemUserName">Filter by System User Name:</label>
-            <input type="text" id="filterSystemUserName" onkeyup="filterTable()" placeholder="Search for System User Names...">
-        </div>
-        <div class="filter-container">
-            <label for="filterCreatedOn">Filter by Created On:</label>
-            <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
-        </div>
-        <div class="filter-container">
-            <label for="filterChangedOn">Filter by Changed On:</label>
-            <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
-        </div>
-        
-        <br><br><br>
-        <table border="1">
-            <tr>
-                {% for header in headers %}
-                    <th>{{ header }}</th>
-                {% endfor %}
-            </tr>
-            {% for row in data %}
-                <tr>
-                    {% for item in row %}
-                        <td>{{ item }}</td>
-                    {% endfor %}
-                </tr>
+<div class="container">
+    <h1>Remove System Access</h1>
+    <form method="POST">
+        <label for="user_name">User Name:</label><br>
+        <input type="text" id="user_name" name="user_name" list="username_list" placeholder="Enter or Select User Name"><br><br>
+        <datalist id="username_list" >
+            {% for user in users %} 
+                <option value="{{ user }}">{{ user }}</option>
             {% endfor %}
-        </table>
+        </datalist>
+
+        <label for="System_Name">System Name:</label><br>
+        <input type="text" id="System_Name" name="System_Name" list="system_name_list" placeholder="Enter or Select System Name"><br><br>
+        <datalist id="system_name_list">
+            {% for system in systems %} 
+                <option value="{{ system }}">{{ system }}</option>
+            {% endfor %}
+        </datalist>
+
+        <label for="System_User_Name">System Username:</label><br>
+        <input type="text" id="System_User_Name" name="System_User_Name" list="system_user_name_list" placeholder="Enter or Select System Username"><br><br>
+        <datalist id="system_user_name_list">
+            {% for system_user in system_users %} 
+                <option value="{{ system_user }}">{{ system_user }}</option>
+            {% endfor %}
+        </datalist>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<br>
+<div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <a class="{{ message[1] }}">{{ message[0] }}</a>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% block body %}{% endblock %}
+</div>
+
+<div class="container2">
+    <h1>System Access Table</h1>
+
+    <label for="showRemoved">Show Removed</label>
+    <input type="checkbox" id="showRemoved" onchange="toggleRemoved()">
+    <br><br><br>
+    <!-- Filter inputs for User Name, System Name, and System User Name -->
+    <div class="filter-container">
+        <label for="filterUserName">Filter by User Name:</label>
+        <input type="text" id="filterUserName" onkeyup="filterTable()" placeholder="Search for User Names...">
     </div>
+    <div class="filter-container">
+        <label for="filterSystemName">Filter by System Name:</label>
+        <input type="text" id="filterSystemName" onkeyup="filterTable()" placeholder="Search for System Names...">
+    </div>
+    <div class="filter-container">
+        <label for="filterSystemUserName">Filter by System User Name:</label>
+        <input type="text" id="filterSystemUserName" onkeyup="filterTable()"
+            placeholder="Search for System User Names...">
+    </div>
+    <div class="filter-container">
+        <label for="filterCreatedOn">Filter by Created On:</label>
+        <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
+    </div>
+    <div class="filter-container">
+        <label for="filterChangedOn">Filter by Changed On:</label>
+        <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
+    </div>
+
+    <br><br><br>
+    <table border="1" style="max-width: 100%; margin: 0 auto;">
+        <tr>
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in data %}
+        <tr>
+            {% for item in row %}
+            <td>{{ item }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 
     <script>
         function filterTable() {
@@ -205,10 +291,10 @@
             const filterSystemUserName = document.getElementById("filterSystemUserName").value.toUpperCase();
             const filterCreatedOn = document.getElementById("filterCreatedOn").value.toUpperCase();
             const filterChangedOn = document.getElementById("filterChangedOn").value.toUpperCase();
-    
+
             const table = document.querySelector(".container2 table");
             const rows = table.getElementsByTagName("tr");
-    
+
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName("td");
                 const userNameData = cells[1].textContent.trim().toUpperCase();
@@ -216,23 +302,23 @@
                 const systemUserNameData = cells[3].textContent.trim().toUpperCase();
                 const createdOnData = cells[4].textContent.trim().toUpperCase();
                 const changedOnData = cells[5].textContent.trim().toUpperCase();
-    
+
                 const userNameMatch = userNameData.includes(filterUserName);
                 const systemNameMatch = systemNameData.includes(filterSystemName);
                 const systemUserNameMatch = systemUserNameData.includes(filterSystemUserName);
                 const createdOnMatch = createdOnData.includes(filterCreatedOn);
                 const changedOnMatch = changedOnData.includes(filterChangedOn);
-    
+
                 rows[i].style.display =
                     userNameMatch && systemNameMatch && systemUserNameMatch &&
-                    createdOnMatch && changedOnMatch ? "" : "none";
+                        createdOnMatch && changedOnMatch ? "" : "none";
             }
         }
 
         function toggleRemoved() {
             const showRemoved = document.getElementById("showRemoved").checked;
             const rows = document.querySelector(".container2 table").getElementsByTagName("tr");
-    
+
             for (let i = 1; i < rows.length; i++) {
                 const removedCell = rows[i].querySelector('td:last-child');
                 if (showRemoved || removedCell.textContent.trim() === 'F') {
@@ -242,14 +328,15 @@
                 }
             }
         }
-    
+
         document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("showRemoved").addEventListener("change", toggleRemoved);
-    
+
             // Call the function initially to set the initial state
             toggleRemoved();
         });
 
     </script>
 </body>
+
 </html>

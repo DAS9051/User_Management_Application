@@ -20,6 +20,7 @@ def login():
             session['username'] = username
             return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
         else:
+            flash('Incorrect Username or Password', 'danger')
             return render_template('login.html', error="Incorrect Username or Password")
 
     return render_template('login.html')
@@ -54,10 +55,24 @@ def add_userpage():
         department = request.form.get('department')
         company = request.form.get('company')
         company_email = request.form.get('company_email')
+        if Create_User(user_name, first_name, last_name, department, company, company_email, session['username']):
+            flash(('Successfully Added User', 'success'))
+        else:
+            flash(('Failed to Add User', 'danger'))
 
-        Create_User(user_name, first_name, last_name, department, company, company_email, session['username'])
 
-    return render_template('Add_User.html', headers=getheader('USER_TABLE'), data=getdata('USER_TABLE'))
+    head = getheader('USER_TABLE')
+    head[0] = 'User Name'
+    head[1] = 'First Name'
+    head[2] = 'Last Name'
+    head[3] = 'Department'
+    head[4] = 'Company'
+    head[5] = 'Company Email'
+    head[6] = 'Created On'
+    head[7] = 'Changed On' 
+    head[8] = 'Removed'
+    
+    return render_template('Add_User.html', headers=head, data=getdata('USER_TABLE'))
 
 @app.route('/remove-user', methods=['GET', 'POST'])
 def delete_userpage():
@@ -68,9 +83,23 @@ def delete_userpage():
         return redirect('/')
     if request.method == 'POST':
         user_name = request.form.get('user_name')
-        
-        Delete_User(user_name, session['username'])
-    return render_template('Remove_User.html', headers=getheader('USER_TABLE'), data=getdata('USER_TABLE'))
+        print(user_name)
+        if (Delete_User(user_name, session['username'])):
+            flash(('Successfully Deleted User', 'success'))
+        else:
+            flash(('Failed to Delete User', 'danger'))
+    
+    head = getheader('USER_TABLE')
+    head[0] = 'User Name'
+    head[1] = 'First Name'
+    head[2] = 'Last Name'
+    head[3] = 'Department'
+    head[4] = 'Company'
+    head[5] = 'Company Email'
+    head[6] = 'Created On'
+    head[7] = 'Changed On' 
+    head[8] = 'Removed'
+    return render_template('Remove_User.html', headers=head, data=getdata('USER_TABLE'), usernames=dropDown('USER_TABLE', 'User_Name'))
 
 @app.route('/add-system', methods=['GET', 'POST'])
 def add_systempage():
@@ -85,8 +114,20 @@ def add_systempage():
         company = request.form.get('Company')
         software = request.form.get('Software')
         
-        Create_System(system_name, description, company, software, session['username'])
-    return render_template('Add_System.html', headers=getheader('SYSTEM_TABLE'), data=getdata('SYSTEM_TABLE'))
+        if Create_System(system_name, description, company, software, session['username']):
+            flash(('Successfully Added System', 'success'))
+        else:
+            flash(('Failed to Add System', 'danger'))
+
+    head = getheader('SYSTEM_TABLE')
+    head[0] = 'System Name'
+    head[1] = 'Description'
+    head[2] = 'Company'
+    head[3] = 'Software'
+    head[4] = 'Created On'
+    head[5] = 'Changed On'
+    head[6] = 'Removed'
+    return render_template('Add_System.html', headers=head, data=getdata('SYSTEM_TABLE'))
 
 @app.route('/remove-system', methods=['GET', 'POST'])
 def delete_systempage():
@@ -97,9 +138,22 @@ def delete_systempage():
         return redirect('/')
     if request.method == 'POST':
         system_name = request.form.get('System_Name')
-        print(system_name)
-        Delete_System(system_name, session['username'])
-    return render_template('Remove_System.html', headers=getheader('SYSTEM_TABLE'), data=getdata('SYSTEM_TABLE'))
+
+        if (Delete_System(system_name, session['username'])):
+            flash(('Successfully Deleted System', 'success'))
+        else:
+            flash(('Failed to Delete System', 'danger'))
+        # Delete_System(system_name, session['username'])
+
+    head = getheader('SYSTEM_TABLE')
+    head[0] = 'System Name'
+    head[1] = 'Description'
+    head[2] = 'Company'
+    head[3] = 'Software'
+    head[4] = 'Created On'
+    head[5] = 'Changed On'
+    head[6] = 'Removed'
+    return render_template('Remove_System.html', headers=head, data=getdata('SYSTEM_TABLE'), systems=dropDown('SYSTEM_TABLE', 'System_Name'))
 
 @app.route('/add-system-access', methods=['GET', 'POST'])
 def add_system_accesspage():
@@ -112,8 +166,20 @@ def add_system_accesspage():
         user_name = request.form.get('user_name')
         system_name = request.form.get('system_name')
         system_user_name = request.form.get('system_User_Name')
-        Add_system_access(system_name, user_name, system_user_name, session['username'])
-    return render_template('Add_System_Access.html', headers=getheader('SYSTEM_ACCESS_TABLE'), data=getdata('SYSTEM_ACCESS_TABLE'))
+        if (Add_system_access(system_name, user_name, system_user_name, session['username'])):
+            flash(('Successfully Added System Access', 'success'))
+        else:
+            flash(('Failed to Add System Access', 'danger'))
+    
+    head = getheader('SYSTEM_ACCESS_TABLE')
+    head[0] = 'Access ID'
+    head[1] = 'User Name'
+    head[2] = 'System Name'
+    head[3] = 'System User Name'
+    head[4] = 'Created On'
+    head[5] = 'Changed On'
+    head[6] = 'Removed'
+    return render_template('Add_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), systems=dropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),users=dropDown('USER_TABLE', 'USER_NAME'))   
 
 @app.route('/remove-system-access', methods=['GET', 'POST'])
 def remove_system_accesspage():
@@ -125,9 +191,24 @@ def remove_system_accesspage():
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         system_name = request.form.get('System_Name')
+        system_username = request.form.get('System_User_Name')
 
-        Delete_system_access(system_name, user_name, session['username'])
-    return render_template('Remove_System_Access.html', headers=getheader('SYSTEM_ACCESS_TABLE'), data=getdata('SYSTEM_ACCESS_TABLE'))
+        if (Delete_system_access(system_name, user_name, session['username'], system_username)):
+            flash(('Successfully Deleted System Access', 'success'))
+        else:
+            flash(('Failed to Delete System Access', 'danger'))
+        # Delete_system_access(system_name, user_name, session['username'], system_username)
+    
+    head = getheader('SYSTEM_ACCESS_TABLE')
+    head[0] = 'Access ID'
+    head[1] = 'User Name'
+    head[2] = 'System Name'
+    head[3] = 'System User Name'
+    head[4] = 'Created On'
+    head[5] = 'Changed On'
+    head[6] = 'Removed'
+
+    return render_template('Remove_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), users=dropDown('SYSTEM_ACCESS_TABLE', 'USER_NAME'), systems=dropDown('SYSTEM_ACCESS_TABLE', 'SYSTEM_NAME'),system_users=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'), system_username=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'))
 
 
 

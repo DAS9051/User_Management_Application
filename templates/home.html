@@ -21,6 +21,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            animation: fade-in 1s ease-out;
         }
 
         /* Navigation styles */
@@ -31,6 +32,7 @@
             width: 100%;
             justify-content: center;
             gap: 10px;
+            animation: fade-in 1s ease-out;
         }
 
         .navigation button {
@@ -40,10 +42,21 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            animation: fade-in 1s ease-out;
         }
 
         .navigation button:hover {
             background-color: #0056b3;
+        }
+
+        /* Keyframes for the fade-in animation */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
 
         /* Container styles */
@@ -55,34 +68,42 @@
             width: 300px;
             text-align: center;
             margin: 20px;
+            animation: fade-in 1s ease-out;
         }
 
         /* Table styles */
         .container2 {
             background-color: #ffffff;
-            border-radius: 5px;
+            /* border-radius: 5px; */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 80%;
+            width: 90%;
             text-align: center;
             margin: 20px;
+            animation: fade-in 1s ease-out;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-        }
-
-        th, td {
             border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
+            table-layout: fixed;
         }
 
         th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            padding: 10px;
+            background-color: rgb(186, 188, 186);
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            max-width: 100;
+            word-wrap: break-word;
         }
 
         /* Filter input styles */
@@ -148,7 +169,8 @@
             <label for="filterSystemName">Filter by System Name:</label>
             <input type="text" id="filterSystemName" onkeyup="filterTable()" placeholder="Search for system names...">
         </div>
-        <table id="auditTable" border="1">
+        <br><br><br>
+        <table id="auditTable" border="1" style="max-width: 100%; margin: 0 auto;">
             <tr>
                 {% for header in headers %}
                     <th>
