@@ -66,10 +66,18 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            width: 90%;
             text-align: center;
             margin: 20px;
             animation: fade-in 1s ease-out;
+        }
+
+        .leftCont {
+            margin-right: auto;
+        }
+
+        .rightCont {
+            margin-left: auto;
         }
 
         /* Table styles */
@@ -82,6 +90,23 @@
             text-align: center;
             margin: 20px;
             animation: fade-in 1s ease-out;
+        }
+
+        .container label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: -10px;
+        }
+
+        .container input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: auto; /* Center horizontally */
+            margin-right: auto; /* Center horizontally */
+            display: block; /* Ensure that the input is treated as a block element */
         }
 
         table {
@@ -150,6 +175,45 @@
             font-family: Arial, sans-serif;
             margin-bottom: 20px;
         }
+
+        .pdf_button{
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .pdf_button:hover{
+            background-color: #0056b3;
+        }
+
+        /* Add a new class for the PDF container */
+        .pdf-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Style for each PDF form */
+        .pdf-form {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        /* Adjust form styles as needed */
+        .pdf-form h2 {
+            margin-bottom: 10px;
+        }
+
+        .pdf-form label,
+        .pdf-form input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
     </style>
 
 </head>
@@ -177,6 +241,38 @@
 
     <div class="container">
         <h1> Home </h1>
+
+        <div class="pdf-container">
+            <div class="pdf-form">
+                <h2>Generate PDF Report</h2>
+                <form action="/generate-pdf" method="POST">
+                    <label for="user_name">User Name:</label><br>
+                    <input type="text" id="user_name" name="user_name" list="user_name_list" placeholder="Enter or Select Username">
+                    <datalist id="user_name_list">
+                        {% for user in users %}
+                            <option value="{{user}}">{{user}}</option>
+                        {% endfor %}
+                    </datalist>
+                    <br><br>
+                    <button type="submit" class="pdf_button">Generate PDF</button>
+                </form>
+            </div>
+
+            <div class="pdf-form">
+                <h2>Import CSV File</h2>
+                <form action="/generate-pdf" method="POST">
+                    <label for="user_name">Table Name:</label><br>
+                    <input type="text" id="user_name" name="user_name" list="user_name_list" placeholder="Enter or Select Table Name">
+                    <datalist id="user_name_list">
+                        {% for user in users %}
+                            <option value="{{user}}">{{user}}</option>
+                        {% endfor %}
+                    </datalist>
+                    <br><br>
+                    <button type="submit" class="pdf_button">Import CSV</button>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="container2">
         <h2>Audit Trail</h2>
@@ -205,11 +301,7 @@
             <tr>
                 {% for header in headers %}
                     <th>
-                        {% if header == "Type of Change" %}
-                            <a href="#" onclick="sortTable(2)">{{ header }}</a>
-                        {% else %}
-                            {{ header }}
-                        {% endif %}
+                        {{ header }}
                     </th>
                 {% endfor %}
             </tr>

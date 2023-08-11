@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, flash, session, redirect
+from flask import Flask, request, jsonify, render_template, flash, session, redirect, send_file
 from sqlhandle import *
 from flask_session import Session
 
@@ -11,7 +11,14 @@ Session(app)
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if session.get('log') == True:
-        return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+        header = getheader('AUDIT_TRAIL')
+        header[0] = 'ID'
+        header[1] = 'Username'
+        header[2] = 'Name'
+        header[3] = 'Changed On'
+        header[4] = 'Type of Change'
+        header[5] = 'System Name'
+        return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -19,7 +26,14 @@ def login():
             session['log'] = True
             session['username'] = username
             auditlog(username, 'Logged In')
-            return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+            header = getheader('AUDIT_TRAIL')
+            header[0] = 'ID'
+            header[1] = 'Username'
+            header[2] = 'Name'
+            header[3] = 'Changed On'
+            header[4] = 'Type of Change'
+            header[5] = 'System Name'
+            return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
         else:
             flash('Incorrect Username or Password', 'danger')
             auditlog(username, 'Failed Log In')
@@ -34,7 +48,14 @@ def home():
             return redirect('/')
     except:
         return redirect('/')
-    return render_template('home.html', headers=getheader('AUDIT_TRAIL'), data=getdata('AUDIT_TRAIL'))
+    header = getheader('AUDIT_TRAIL')
+    header[0] = 'ID'
+    header[1] = 'Username'
+    header[2] = 'Name'
+    header[3] = 'Changed On'
+    header[4] = 'Type of Change'
+    header[5] = 'System Name'
+    return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
 
 
 @app.route('/logout')
@@ -234,7 +255,7 @@ def remove_system_accesspage():
     head[5] = 'Changed On'
     head[6] = 'Removed'
 
-    return render_template('Remove_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), users=dropDown('SYSTEM_ACCESS_TABLE', 'USER_NAME'), systems=dropDown('SYSTEM_ACCESS_TABLE', 'SYSTEM_NAME'),system_users=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'), system_username=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'))
+    return render_template('Remove_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), users=dropDown('USER_TABLE', 'USER_NAME'), systems=dropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),system_users=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'), system_username=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'))
 
 
 @app.route('/create-account', methods=['GET', 'POST'])
@@ -278,5 +299,16 @@ def change_passwordpage():
 
     return render_template('Change_Password.html')
     
+
+@app.route('/generate-pdf', methods=['POST'])
+def generate_reportpage():
+    username = request.form.get('user_name')
+
+    pdf_path = 'report.pdf'
+    generatereport(username, session['username'])
+
+    # Serve the PDF to the client
+    return send_file(pdf_path, download_name='report.pdf', as_attachment=True)
+
 if __name__ == '__main__':
     app.run(debug=True)

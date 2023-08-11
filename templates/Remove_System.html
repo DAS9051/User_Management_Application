@@ -88,17 +88,60 @@
             border-radius: 4px;
         }
 
-        .container input[type="submit"] {
-            background-color: #007bff;
+        /* .container input[type="submit1"] {
+            background-color: #ff0000;
             color: white;
             border: none;
             border-radius: 4px;
             padding: 10px 20px;
             cursor: pointer;
+            max-width: 50px;
         }
 
-        .container input[type="submit"]:hover {
-            background-color: #0056b3;
+        .container input[type="submit1"]:hover {
+            background-color: #911d1d;
+        }
+
+        .container input[type="submit2"] {
+            background-color: #3bb756;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            max-width: 50px;
+        }
+
+        .container input[type="submit2"]:hover {
+            background-color: #245d1f;
+        } */
+
+        .submit1 {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            max-width: 85px;
+        }
+
+        .submit1:hover {
+            background-color: #911d1d;
+        }
+
+        .submit2 {
+            background-color: #3bb756;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            max-width: 85px;
+        }
+
+        .submit2:hover {
+            background-color: #245d1f;
         }
 
         table {
@@ -225,7 +268,7 @@
     </div>
     
     <div class="container">
-        <h1>Remove System</h1>
+        <h1>Manage Systems</h1>
         <form method="POST">
             <label for="System_Name">System Name:</label><br>
             <input type="text" id="System_Name" name="System_Name" list="System_list" placeholder="Enter or Select System Name"><br><br>
@@ -234,8 +277,8 @@
                     <option value="{{system}}">{{user}}</option>
                 {% endfor %}
             </datalist>
-            <input type="submit" name="submit_button" value="Submit">
-            <input type="submit" name="restore_button" value="Restore">
+            <input type="submit" class="submit1" name="submit_button" value="Delete">
+            <input type="submit" class="submit2" name="restore_button" value="Restore">
         </form>
     </div>
     <br>
