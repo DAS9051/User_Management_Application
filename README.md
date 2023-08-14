@@ -57,10 +57,16 @@ Create the required tables in your SQL Server database. Execute the following SQ
     );
     ```
 
+    To create your first login run the following command:
+   ```sql
+   INSERT INTO LOGINS(USERNAME,PASSWORD) VALUE("<username>","<SHA256 hash>")
+   ```
+   Get hash from [SHA256 Generator](https://emn178.github.io/online-tools/sha256.html)
+
 3. **System Table:**
 
     ```sql
-    CREATE TABLE System (
+    CREATE TABLE System_Table (
     SYSTEM_NAME VARCHAR(50),
     DESCRIPTION VARCHAR(200),
     Company VARCHAR(50),
@@ -75,7 +81,7 @@ Create the required tables in your SQL Server database. Execute the following SQ
 4. **System Access Table:**
 
     ```sql
-    CREATE TABLE System_Access (
+    CREATE TABLE System_Access_Table (
         Access_Id INT IDENTITY(1,1) PRIMARY KEY,
         Username VARCHAR(255),
         system_name VARCHAR(255),
