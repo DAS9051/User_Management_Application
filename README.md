@@ -28,7 +28,7 @@ pip install Flask pyodbc requests aspose.pdf reportlab flask_session
 ```
 
 ## 3. SQL Server Setup<a name="sql-server-setup"></a>
-Before running the web application, ensure that you have a Microsoft SQL Server instance configured and running. Update the connection string in the code to match your SQL Server configuration. Modify the connection string in both `sqlhandle.py` and the main Flask file (`main.py`).
+Before running the web application, ensure that you have a Microsoft SQL Server instance configured and running. Update the connection string in the code to match your SQL Server configuration. Modify the connection string in  `sqlhandle.py`.
 
 ## Tables Creation
 Create the required tables in your SQL Server database. Execute the following SQL queries to create the necessary tables:
