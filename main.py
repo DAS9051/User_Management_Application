@@ -354,4 +354,4 @@ def upload():
         return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

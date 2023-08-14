@@ -769,7 +769,7 @@ def importcsv(tablename, owner, data):
             cursor.execute('''
                 INSERT INTO System_ACCESS_Table
                 (user_name, system_name,SYSTEM_USER_NAME, created_on, changed_on, removed, role)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?,?)
             ''', (username,system_name, system_username, created_on, changed_on, 'F', role))
 
             
