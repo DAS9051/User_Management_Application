@@ -8,7 +8,7 @@ This documentation provides a step-by-step guide on how to deploy the given web 
 3. [SQL Server Table Creation](#sql-server-setup)
 4. [Deployment Steps](#deployment-steps)
 
-## 1. Introduction<a name="introduction"></a>
+## 1. Introduction
 This web application is built using Flask and relies on various libraries and dependencies to function properly. The application includes multiple files, including Flask code, SQL handling scripts, and HTML templates.
 
 ## 2. Python Dependencies<a name="dependencies"></a>
