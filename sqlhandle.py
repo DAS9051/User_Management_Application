@@ -5,13 +5,10 @@ from hashlib import sha256
 import aspose.pdf as ap
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import inch
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
-
-
-
+import csv
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -35,6 +32,9 @@ def Create_User(User_Name, First_Name, Last_Name, Department, Company, Company_E
     if (User_Name == "" and First_Name == "" and Last_Name == "" and Department == "" and Company == "" and Company_Email_Address == ""):
         return False
     
+    if User_Name == "":
+        return False
+    
     cursor.execute(f"SELECT count(USER_NAME) FROM USER_TABLE WHERE USER_NAME = '{User_Name}';")
     for i in cursor:
         if i[0] == 0:
@@ -51,8 +51,9 @@ def Create_User(User_Name, First_Name, Last_Name, Department, Company, Company_E
     cursor.execute(audit_query, (User_Name, Owner_User, Created_On, "Created User"))
     conn.commit()
 
-
     return True
+
+
 
 
 def Restore_User(user_name, Owner_User):
@@ -111,10 +112,44 @@ def Delete_User(User_Name, Owner_User):
     cursor.execute(audit_query, (User_Name, Owner_User, Changed_On, "Deleted User"))
     conn.commit()
 
+    cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE USER_NAME = '{User_Name}' AND REMOVED = 'F';")
+    for i in cursor:
+        if i[0] == 0:
+            return True
+        else:
+            # print("bob")
+            break 
+    cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE USER_NAME = '{User_Name}';")
+    for i in cursor:
+        if i[0] > 0:
+            break
+        else:
+            return True
+    print("test")
+    systemname = cursor.execute(f"Select SYSTEM_NAME FROM SYSTEM_ACCESS_TABLE WHERE USER_NAME = '{User_Name}'")
+    systemname = systemname.fetchall()
+    systems = []
+    for i in systemname:
+        systems.append(i[0])
+
+    print(systems)
+
+
+    for i in systems:
+        query = f"UPDATE SYSTEM_ACCESS_TABLE SET Removed = 'T', Changed_On = '{Changed_On}' WHERE USER_NAME = '{User_Name}';"
+        cursor.execute(query)
+        audit_query = "INSERT INTO Audit_Trail(System_name, Name, Changed_On, Type_Of_Change, USER_NAME) VALUES(?, ?, ?,?,?);"
+        cursor.execute(audit_query, ( i, Owner_User, Changed_On, "Deleted System Access", User_Name))
+        conn.commit()
+
+
     return True
 
 def Create_System(system_name, description, company, software, Owner_User):
     if (system_name == "" and description == "" and company == "" and software == ""):
+        return False
+    
+    if (system_name == ""):
         return False
     
     cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_TABLE WHERE System_Name = '{system_name}';")
@@ -162,6 +197,36 @@ def Delete_System(system_name, Owner_User):
     audit_query = "INSERT INTO Audit_Trail(System_name, Name, Changed_On, Type_Of_Change) VALUES( ?, ?, ?, ?);"
     cursor.execute(audit_query, ( system_name, Owner_User, Changed_On, "Deleted System"))
     conn.commit()
+
+    cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE System_Name = '{system_name}' AND REMOVED = 'F';")
+    for i in cursor:
+        if i[0] == 0:
+            return True
+        else:
+            # print("bob")
+            break 
+    cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE System_Name = '{system_name}';")
+    for i in cursor:
+        if i[0] > 0:
+            break
+        else:
+            return True
+    print("test")
+    username = cursor.execute(f"Select USER_NAME FROM SYSTEM_ACCESS_TABLE WHERE System_Name = '{system_name}'")
+    username = username.fetchall()
+    users = []
+    for i in username:
+        users.append(i[0])
+
+
+    for i in users:
+        query = f"UPDATE SYSTEM_ACCESS_TABLE SET Removed = 'T', Changed_On = '{Changed_On}' WHERE System_Name = '{system_name}';"
+        cursor.execute(query)
+        audit_query = "INSERT INTO Audit_Trail(System_name, Name, Changed_On, Type_Of_Change, USER_NAME) VALUES(?, ?, ?,?,?);"
+        cursor.execute(audit_query, ( system_name, Owner_User, Changed_On, "Deleted System Access", i))
+        conn.commit()
+
+
     return True
 
 
@@ -194,8 +259,8 @@ def Restore_System(system_name, Owner_User):
     conn.commit()
     return True
 
-def Add_system_access(system_name, user_name, system_username, Owner_User):
-    if (system_name == "" and user_name == "" and system_username == ""):
+def Add_system_access(system_name, user_name, system_username, Owner_User, role):
+    if (system_name == "" and user_name == "" and system_username == "" and role == ""):
         return False
     
 
@@ -206,7 +271,7 @@ def Add_system_access(system_name, user_name, system_username, Owner_User):
         else:
             return False
     Changed_On = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    query = f"INSERT INTO SYSTEM_ACCESS_TABLE(System_Name, User_Name, Created_On, Changed_On, System_user_name, Removed) VALUES('{system_name}', '{user_name}', '{Changed_On}', '{Changed_On}', '{system_username}', 'F')"
+    query = f"INSERT INTO SYSTEM_ACCESS_TABLE(System_Name, User_Name, Created_On, Changed_On, System_user_name, Removed, ROLE) VALUES('{system_name}', '{user_name}', '{Changed_On}', '{Changed_On}', '{system_username}', 'F', '{role}')"
     cursor.execute(query)
     conn.commit()
 
@@ -218,6 +283,8 @@ def Add_system_access(system_name, user_name, system_username, Owner_User):
 def Delete_system_access(system_name, user_name, Owner_User, system_user_name):
     if (system_name == "" and user_name == ""):
         return False
+    
+
     
     cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE System_Name = '{system_name}' AND User_Name = '{user_name}' AND SYSTEM_USER_NAME = '{system_user_name}' AND REMOVED = 'T';")
     for i in cursor:
@@ -354,6 +421,13 @@ def Change_Password(old_password, new_password, owner):
 
 
 def generatereport(username, owner):
+
+    cursor.execute(f"SELECT count(USER_NAME) FROM USER_TABLE WHERE USER_NAME = '{username}';")
+    for i in cursor:
+        if i[0] == 0:
+            return False
+        else:
+            break
     doc = SimpleDocTemplate(
         "report.pdf",
         pagesize=letter,
@@ -385,9 +459,16 @@ def generatereport(username, owner):
     para = Paragraph(text, style=styles["Title"])
     flowables.append(para)
 
+
+    removed = cursor.execute(f"SELECT Removed FROM USER_TABLE WHERE USER_NAME = '{username}'")
+    removed = removed.fetchall()
+    removed = removed[0][0]
+    text=f"User State: {'Active' if removed == 'F' else 'Inactive'}"
+    para = Paragraph(text, style=styles["Title"])
+    flowables.append(para)
+
     spacer = Spacer(1, 0.25 * inch)
     flowables.append(spacer)
-
     text = "User Information"
     para = Paragraph(text, style=styles["Title"])
     flowables.append(para)
@@ -397,11 +478,39 @@ def generatereport(username, owner):
     cursor.execute(f"SELECT * FROM USER_TABLE WHERE USER_NAME = '{username}'")
     data = cursor.fetchall()
     for i in data:
-        for x in range(9):
-            text = f"{getheader('USER_TABLE')[x]}: {i[x]}"
-            para = Paragraph(text, style=styles["Normal"])
-            flowables.append(para)
+        text = f"Username: {i[0]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
 
+        text = f"First Name: {i[1]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Last Name: {i[2]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Department: {i[3]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Company: {i[4]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Company Email Address: {i[5]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Created On: {i[6]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+        text = f"Changed On: {i[7]}"
+        para = Paragraph(text, style=styles["Normal"])
+        flowables.append(para)
+
+    
         flowables.append(Paragraph("", style=styles["Title"]))
 
     spacer = Spacer(1, 0.25 * inch)
@@ -415,13 +524,34 @@ def generatereport(username, owner):
     data = cursor.fetchall()
     for i in data:
         color = colors.red if i[6] == 'T' else colors.blue
+        style = red_style if color == colors.red else blue_style
         spacer = Spacer(1, 0.25 * inch)
         flowables.append(spacer)
-        for x in range(7):
-            text = f"{getheader('SYSTEM_ACCESS_TABLE')[x]}: {i[x]}"
-            style = red_style if color == colors.red else blue_style
-            para = Paragraph(text, style=style)
-            flowables.append(para)
+        text = f"Access ID: {i[0]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"Username: {i[1]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"System Name: {i[2]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"System Username: {i[3]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"Role: {i[4]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"Created On: {i[5]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        text = f"Changed On: {i[6]}"
+        para = Paragraph(text, style=style)
+        flowables.append(para)
+        # for x in range(7):
+        #     text = f"{getheader('SYSTEM_ACCESS_TABLE')[x]}: {i[x]}"
+        #     para = Paragraph(text, style=style)
+        #     flowables.append(para)
 
     spacer = Spacer(1, 0.25 * inch)
     flowables.append(spacer)
@@ -454,8 +584,8 @@ def generatereport(username, owner):
 
     approval_data = [
         ("", "Name                                          ", "Date                                            "),
-        ("Access Changed by: ", "", ""),
-        ("Access Approved by: ", "", "")
+        ("Access Changed by: ", "\n", "\n"),
+        ("Access Approved by: ", "\n", "\n")
     ]
 
     tblstyle = TableStyle([('GRID', (0, 0), (-1, -1), 1, colors.black)])
@@ -473,15 +603,182 @@ def generatereport(username, owner):
     flowables.append(spacer)
 
     # Print Signature field
-    text = "Signature _____________________"
-    para = Paragraph(text, style=styles["Title"])
-    flowables.append(para)
-    spacer = Spacer(1, 0.25 * inch)
-    flowables.append(spacer)
+
+    # spacer = Spacer(1, 0.25 * inch)
+    # flowables.append(spacer)
 
     doc.build(flowables)
+    return True
 
 
+def importcsv(tablename, owner, data):
+    if tablename == "USER_TABLE":
+        for row in data:
+            print(row)
+
+
+
+            try:
+                user_name = row[0]
+            except ValueError:
+                return False
+
+            try:
+                first_name = row[1]
+            except ValueError:
+                first_name = ""
+
+            try:
+                last_name = row[2]
+            except ValueError:
+                last_name = ""
+            
+            try:
+                department = row[3]
+            except ValueError:
+                department = ""
+
+            try:
+                company = row[4]
+            except ValueError:
+                company = ""
+            
+            try:
+                email = row[5]
+            except ValueError:
+                email = ""
+
+
+            cursor.execute(f"SELECT count(USER_NAME) FROM USER_TABLE WHERE USER_NAME = '{user_name}';")
+            for i in cursor:
+                if i[0] == 0:
+                    break
+                else:
+                    return False
+            # Convert datetime strings to datetime objects
+            created_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            changed_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            # Insert data into the database
+            cursor.execute('''
+                INSERT INTO USER_TABLE
+                (USER_NAME, FIRST_NAME, LAST_NAME, DEPARTMENT, COMPANY, COMPANY_EMAIL_ADDRESS, CREATED_ON, CHANGED_ON, REMOVED)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (user_name, first_name, last_name, department, company, email, created_on, changed_on, 'F'))
+            
+
+
+            conn.commit()
+            # audit trail
+            audit_query = "INSERT INTO Audit_Trail( User_Name, Name, Changed_On, Type_Of_Change) VALUES(?, ?, ?, ?);"
+            cursor.execute(audit_query, (user_name, owner, changed_on, "Imported User"))
+            conn.commit()
+        return True
+    elif tablename == "SYSTEM_TABLE":
+        for row in data:
+
+            # # check the number of rows
+            # if len(row) < 4:
+            #     return False
+            
+            try:
+                system_name = row[0]
+            except ValueError:
+                return False
+            
+            try:
+                description = row[1]
+            except ValueError:
+                description = ""
+
+            try:
+                company = row[2]
+            except ValueError:
+                company = ""
+                
+
+            try:
+                software = row[3]
+            except ValueError:
+                software = ""
+
+
+        
+
+            cursor.execute(f"SELECT count(SYSTEM_NAME) FROM SYSTEM_TABLE WHERE SYSTEM_NAME = '{system_name}';")
+            for i in cursor:
+                if i[0] == 0:
+                    break
+                else:
+                    return False
+            # Convert datetime strings to datetime objects
+            created_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            changed_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            # Insert data into the database
+            cursor.execute('''
+                INSERT INTO System_Table
+                (system_name, description, company, software, created_on, changed_on, removed)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (system_name, description, company, software, created_on, changed_on, 'F'))
+            
+            conn.commit()
+            # audit trail
+            audit_query = "INSERT INTO Audit_Trail( System_Name, Name, Changed_On, Type_Of_Change) VALUES(?, ?, ?, ?);"
+            cursor.execute(audit_query, (system_name, owner, changed_on, "Imported System"))
+            conn.commit()
+        return True
+    elif tablename == "SYSTEM_ACCESS_TABLE":
+        for row in data:
+
+            # # check the number of rows
+            # if len(row) < 5:
+            #     return False
+
+            try:
+                username = row[1]
+            except ValueError:
+                return False
+            
+            try:
+                system_name = row[2]
+            except ValueError:
+                return False
+            
+            try:
+                system_username = row[3]
+            except ValueError:
+                system_username = ""
+
+            try:
+                role = row[4]
+            except ValueError:
+                role = ""
+
+            cursor.execute(f"SELECT count(System_Name) FROM SYSTEM_ACCESS_TABLE WHERE System_Name = '{system_name}' AND User_Name = '{username}' AND SYSTEM_USER_NAME = '{system_username}';")
+            for i in cursor:
+                if i[0] == 0:
+                    break
+                else:
+                    return False
+            # Convert datetime strings to datetime objects
+            created_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            changed_on = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            # Insert data into the database
+            cursor.execute('''
+                INSERT INTO System_ACCESS_Table
+                (user_name, system_name,SYSTEM_USER_NAME, created_on, changed_on, removed, role)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (username,system_name, system_username, created_on, changed_on, 'F', role))
+
+            
+            conn.commit()
+            # audit trail
+            audit_query = "INSERT INTO Audit_Trail( System_Name, Name, Changed_On, Type_Of_Change, user_name) VALUES(?, ?, ?, ?,?);"
+            cursor.execute(audit_query, (system_name, owner, changed_on, "Imported System Access", username))
+            conn.commit()
+        return True
 
 
 """

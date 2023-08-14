@@ -200,6 +200,7 @@
         .pdf-form {
             flex: 1;
             margin: 0 10px;
+            
         }
 
         /* Adjust form styles as needed */
@@ -212,6 +213,85 @@
             display: block;
             width: 100%;
             margin-bottom: 10px;
+        }
+
+        .pdf-form select{
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: block;
+            margin-top: 5px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-top: 7px;
+        }
+
+        .upload_csv {
+            color: rgb(0, 0, 0);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px 20px;
+            display: block;
+            max-width: 70%;
+        }
+
+        .upload_csv:hover {
+            background-color: #52a4e8;
+            color: white;
+        }
+
+        .custom-file-upload {
+            border: none;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            width: 70%;
+        }
+
+        input[type="file"]{
+            display: dashed;
+        }
+
+        .flashes-container {
+            text-align: center;
+            display: flex;
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            margin-top: 10px;
+            height: 30px; /* Set a fixed height or adjust as needed */
+        }
+
+        .flashes {
+            display: inline-block;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+            text-align: left; /* Align the flash messages to the left */
+        }
+        
+        /* Add these styles to your existing <style> block */
+        .success {
+            color: green;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            animation: fade-in 0.5s ease-out;
         }
 
     </style>
@@ -253,25 +333,45 @@
                             <option value="{{user}}">{{user}}</option>
                         {% endfor %}
                     </datalist>
-                    <br><br>
+                    <br><br><br><br><br><br>
                     <button type="submit" class="pdf_button">Generate PDF</button>
                 </form>
             </div>
 
+
+
+            
             <div class="pdf-form">
                 <h2>Import CSV File</h2>
-                <form action="/generate-pdf" method="POST">
-                    <label for="user_name">Table Name:</label><br>
-                    <input type="text" id="user_name" name="user_name" list="user_name_list" placeholder="Enter or Select Table Name">
-                    <datalist id="user_name_list">
-                        {% for user in users %}
-                            <option value="{{user}}">{{user}}</option>
-                        {% endfor %}
-                    </datalist>
+                <form method="POST" action="/upload" enctype="multipart/form-data">
+                    <label for="csv_table">Select Table & Upload:</label><br>
+                    <select id="csv_table" name="table" required>
+                        <option value="USER_TABLE">User Table</option>
+                        <option value="SYSTEM_TABLE">System Table</option>
+                        <option value="SYSTEM_ACCESS_TABLE">System Access Table</option>
+                    </select><br><br>
+                    
+                    <div class="upload-container">
+                        <input class="upload_csv" type="file" id="file" name="csv_file" accept=".csv" required>
+                    </div>
+                    
+                    <br>
+                    <button type="submit" class="pdf_button">Upload CSV</button>
                     <br><br>
-                    <button type="submit" class="pdf_button">Import CSV</button>
+                    
+                    <div class="flashes-container" style="left: 10px;">
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <ul class="flashes">
+                            {% for message in messages %}
+                            <li><a class="{{ message[1] }}">{{ message[0] }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
                 </form>
-            </div>
+            </div>            
         </div>
     </div>
     <div class="container2">

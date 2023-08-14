@@ -244,6 +244,8 @@
     
             <label for="System_USER_NAME">System User Name:</label><br>
             <input type="text" id="System_User_Name" name="system_User_Name" value="" placeholder="Enter System User Name"><br><br>
+            <label for="role">Role:</label><br>
+            <input type="text" id="role" name="role" value="" placeholder="Enter Role"><br><br>
     
             <input type="submit" value="Submit">
         </form>
@@ -282,6 +284,10 @@
             <input type="text" id="filterSystemUserName" onkeyup="filterTable()" placeholder="Search for System User Names...">
         </div>
         <div class="filter-container">
+            <label for="filterRole">Filter by Role:</label>
+            <input type="text" id="filterRole" onkeyup="filterTable()" placeholder="Search for Role...">
+        </div>
+        <div class="filter-container">
             <label for="filterCreatedOn">Filter by Created On:</label>
             <input type="text" id="filterCreatedOn" onkeyup="filterTable()" placeholder="Search for Created On...">
         </div>
@@ -289,10 +295,6 @@
             <label for="filterChangedOn">Filter by Changed On:</label>
             <input type="text" id="filterChangedOn" onkeyup="filterTable()" placeholder="Search for Changed On...">
         </div>
-        
-
-
-
 
         <br><br><br>
         <table border="1" style="max-width: 100%; margin: 0 auto;">
@@ -318,7 +320,8 @@
             const filterSystemUserName = document.getElementById("filterSystemUserName").value.toUpperCase();
             const filterCreatedOn = document.getElementById("filterCreatedOn").value.toUpperCase();
             const filterChangedOn = document.getElementById("filterChangedOn").value.toUpperCase();
-    
+            const filterRole = document.getElementById("filterRole").value.toUpperCase();
+
             const table = document.querySelector(".container2 table");
             const rows = table.getElementsByTagName("tr");
     
@@ -327,18 +330,21 @@
                 const userNameData = cells[1].textContent.trim().toUpperCase();
                 const systemNameData = cells[2].textContent.trim().toUpperCase();
                 const systemUserNameData = cells[3].textContent.trim().toUpperCase();
-                const createdOnData = cells[4].textContent.trim().toUpperCase();
-                const changedOnData = cells[5].textContent.trim().toUpperCase();
-    
+                const roleData = cells[4].textContent.trim().toUpperCase();
+                const createdOnData = cells[5].textContent.trim().toUpperCase();
+                const changedOnData = cells[6].textContent.trim().toUpperCase();
+                
+
                 const userNameMatch = userNameData.includes(filterUserName);
                 const systemNameMatch = systemNameData.includes(filterSystemName);
                 const systemUserNameMatch = systemUserNameData.includes(filterSystemUserName);
                 const createdOnMatch = createdOnData.includes(filterCreatedOn);
                 const changedOnMatch = changedOnData.includes(filterChangedOn);
-    
+                const roleMatch = roleData.includes(filterRole);
+
                 rows[i].style.display =
                     userNameMatch && systemNameMatch && systemUserNameMatch &&
-                    createdOnMatch && changedOnMatch ? "" : "none";
+                    createdOnMatch && changedOnMatch && roleMatch ? "" : "none";
             }
         }
 

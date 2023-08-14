@@ -18,6 +18,7 @@ def login():
         header[3] = 'Changed On'
         header[4] = 'Type of Change'
         header[5] = 'System Name'
+
         return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
     if request.method == 'POST':
         username = request.form.get('username')
@@ -207,7 +208,8 @@ def add_system_accesspage():
         user_name = request.form.get('user_name')
         system_name = request.form.get('system_name')
         system_user_name = request.form.get('system_User_Name')
-        if (Add_system_access(system_name, user_name, system_user_name, session['username'])):
+        role = request.form.get('role')
+        if (Add_system_access(system_name, user_name, system_user_name, session['username'],role)):
             flash(('Successfully Added System Access', 'success'))
         else:
             flash(('Failed to Add System Access', 'danger'))
@@ -217,9 +219,10 @@ def add_system_accesspage():
     head[1] = 'User Name'
     head[2] = 'System Name'
     head[3] = 'System User Name'
-    head[4] = 'Created On'
-    head[5] = 'Changed On'
-    head[6] = 'Removed'
+    head[4] = 'Role'
+    head[5] = 'Created On'
+    head[6] = 'Changed On'
+    head[7] = 'Removed'
     return render_template('Add_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), systems=sdropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),users=sdropDown('USER_TABLE', 'USER_NAME'))   
 
 @app.route('/remove-system-access', methods=['GET', 'POST'])
@@ -251,9 +254,10 @@ def remove_system_accesspage():
     head[1] = 'User Name'
     head[2] = 'System Name'
     head[3] = 'System User Name'
-    head[4] = 'Created On'
-    head[5] = 'Changed On'
-    head[6] = 'Removed'
+    head[4] = 'Role'
+    head[5] = 'Created On'
+    head[6] = 'Changed On'
+    head[7] = 'Removed'
 
     return render_template('Remove_System_Access.html', headers=head, data=getdata('SYSTEM_ACCESS_TABLE'), users=dropDown('USER_TABLE', 'USER_NAME'), systems=dropDown('SYSTEM_TABLE', 'SYSTEM_NAME'),system_users=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'), system_username=dropDown('SYSTEM_ACCESS_TABLE', 'System_User_Name'))
 
@@ -302,13 +306,52 @@ def change_passwordpage():
 
 @app.route('/generate-pdf', methods=['POST'])
 def generate_reportpage():
+
+    try:
+        if session['log'] == False:
+            return redirect('/')
+    except:
+        return redirect('/')
     username = request.form.get('user_name')
 
     pdf_path = 'report.pdf'
-    generatereport(username, session['username'])
+    if generatereport(username, session['username']):
+        return send_file(pdf_path, download_name='report.pdf', as_attachment=True)
 
     # Serve the PDF to the client
-    return send_file(pdf_path, download_name='report.pdf', as_attachment=True)
+
+    header = getheader('AUDIT_TRAIL')
+    header[0] = 'ID'
+    header[1] = 'Username'
+    header[2] = 'Name'
+    header[3] = 'Changed On'
+    header[4] = 'Type of Change'
+    header[5] = 'System Name'
+    return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
+
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    selected_table = request.form['table']
+    csv_file = request.files['csv_file']
+    if csv_file:
+        csv_data = csv_file.read().decode('utf-8').splitlines()
+        csv_reader = csv.reader(csv_data)
+        next(csv_reader)  # Skip header
+
+        if not importcsv(selected_table, session['username'], csv_reader):
+            flash(('Failed to Import CSV', 'danger'))
+        else:
+            flash(('Succesfully Imported CSV', 'success'))
+        header = getheader('AUDIT_TRAIL')
+        header[0] = 'ID'
+        header[1] = 'Username'
+        header[2] = 'Name'
+        header[3] = 'Changed On'
+        header[4] = 'Type of Change'
+        header[5] = 'System Name'
+        return render_template('home.html', headers=header, data=getdata('AUDIT_TRAIL'), users=dropDown('USER_TABLE', 'User_Name'))
 
 if __name__ == '__main__':
     app.run(debug=True)
