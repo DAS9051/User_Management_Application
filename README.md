@@ -83,7 +83,7 @@ Create the required tables in your SQL Server database. Execute the following SQ
     ```sql
     CREATE TABLE System_Access_Table (
         Access_Id INT IDENTITY(1,1) PRIMARY KEY,
-        Username VARCHAR(255),
+        User_name VARCHAR(255),
         system_name VARCHAR(255),
         system_User_name VARCHAR(255),
         role VARCHAR(255),
