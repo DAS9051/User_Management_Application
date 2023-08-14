@@ -117,3 +117,5 @@ Follow these steps to deploy the web application:
 2. **Navigate to Root Directory**: Open a terminal on the server and navigate to the root directory of the web application.
 
 3. **Install Dependencies**: Install the required dependencies as mentioned in the "Dependencies" section.
+
+4. **Start the program**: While in the root directory of the web application run ```python main.py```
