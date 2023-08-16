@@ -59,7 +59,7 @@ Create the required tables in your SQL Server database. Execute the following SQ
 
     To create your first login run the following command:
    ```sql
-   INSERT INTO LOGINS(USERNAME,PASSWORD) VALUES("<username>","<SHA256 hash>")
+   INSERT INTO LOGINS(USERNAME,PASSWORD) VALUES('<username>','<SHA256 hash>')
    ```
    Get hash from [SHA256 Generator](https://emn178.github.io/online-tools/sha256.html)
 
